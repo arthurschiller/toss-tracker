@@ -207,4 +207,43 @@ extension Entity {
             setTransformMatrix(newValue, relativeTo: nil)
         }
     }
+    
+    func visit(using block: (Entity) -> Void) {
+        block(self)
+        for child in children {
+            child.visit(using: block)
+        }
+    }
+    
+    /// Recursive search of children looking for any descendants with a specific component and calling a closure with them.
+    func forEachDescendant<T: Component>(withComponent componentClass: T.Type, _ closure: (Entity, T) -> Void) {
+        for child in children {
+            if #available(visionOS 1.0, iOS 18.0, *) {
+                if let component = child.components[componentClass] {
+                    closure(child, component)
+                }
+            } else {
+                if let component = child.components[componentClass] {
+                    closure(child, component)
+                }
+            }
+            child.forEachDescendant(withComponent: componentClass, closure)
+        }
+    }
+    
+    func component<T: Component>(forType: T.Type) -> T? {
+        return components[T.self]
+    }
+    
+    func modifyComponent<T: Component>(forType: T.Type, _ closure: (inout T) -> Void) {
+        guard var component = component(forType: T.self) else { return }
+        closure(&component)
+        components[T.self] = component
+    }
+}
+
+extension AudioPlaybackController {
+    static func volumeInDecibels(volume: Double) -> Double {
+        return 20.0 * log10(volume)
+    }
 }

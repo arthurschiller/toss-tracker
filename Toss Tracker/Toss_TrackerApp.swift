@@ -23,6 +23,7 @@ struct Toss_TrackerApp: App {
                 .onDisappear {
                     appModel.immersiveSpaceState = .closed
                 }
+                .preferredSurroundingsEffect(.ultraDark)
         }
         .immersionStyle(selection: .constant(.mixed), in: .mixed)
         #else

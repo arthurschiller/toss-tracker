@@ -29,7 +29,52 @@ struct PreGameView: View {
 //            logoView
 //        }
         
-        logoView
+        VStack(spacing: -16) {
+            logoView
+//                .background(Color.red)
+            
+//            VStack(spacing: 24) {
+//                Text("Highscore: \(viewModel.gameManager.highscore)")
+//                    .foregroundStyle(.white)
+//                    .font(.system(.largeTitle, design: .rounded, weight: .semibold))
+//                    .shadow(color: .black.opacity(0.2), radius: 24, x: 0, y: 1)
+//                    .scaleEffect(didAppear ? 1 : 0.5)
+//                    .opacity(didAppear ? 1 : 0)
+//                    .blur(radius: didAppear ? 0 : 12)
+//                    .offset(y: didAppear ? 0 : 16)
+//                
+////                Text(howToPlayString)
+////                    .foregroundStyle(.white)
+////                    .font(.system(.caption, weight: .regular))
+////                    .multilineTextAlignment(.leading)
+////                    .shadow(color: .black.opacity(0.2), radius: 24, x: 0, y: 1)
+////                    .frame(maxWidth: 192)
+//                
+//                Button {
+//                    viewModel.startGame()
+//                } label: {
+//                    ZStack {
+//                        Text("Start")
+//                            .foregroundStyle(.black)
+//                            .blendMode(.overlay)
+//                        
+//                        Text("Start")
+//                            .foregroundStyle(.black)
+//                            .blendMode(.overlay)
+//                    }
+//                }
+//                .buttonStyle(PlayButton())
+//                .frame(minWidth: 128)
+//                .scaleEffect(didAppear ? 1 : 0.5)
+//                .opacity(didAppear ? 1 : 0)
+//                .blur(radius: didAppear ? 0 : 12)
+//                .offset(y: didAppear ? 0 : 24)
+//            }
+//            .animation(.easeInOut(duration: 3), value: didAppear)
+        }
+        .onAppear {
+            didAppear = true
+        }
     }
     
     @ViewBuilder
@@ -48,14 +93,25 @@ struct PreGameView: View {
                     }
                 }
         }
-        .offset(y: -50)
-        .frame(depth: 0.5)
+//        .offset(y: -50)
+//        .frame(depth: 0.5)
         .scaleEffect(didAppear ? 0.95 : 1.0)
         .opacity(didAppear ? 0.95 : 1.0)
         .animation(.easeInOut(duration: 3).repeatForever(autoreverses: true), value: didAppear)
-        .onAppear {
-            didAppear = true
+    }
+    
+    var howToPlayString: AttributedString {
+        let howToPlay = "How to Play:".uppercased()
+        var string = AttributedString(
+            """
+            How to Play: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+            """
+        )
+        // Apply regular font to "Toss"
+        if let range = string.range(of: howToPlay) {
+            string[range].font = .system(.caption, weight: .heavy)
         }
+        return string
     }
     
     var attributedTossTracker: AttributedString {
@@ -108,37 +164,78 @@ struct AnimatingMeshView: View {
     let referenceDate: Date
     
     var body: some View {
-        TimelineView(.animation) { context in
-            let t = context.date.timeIntervalSince(referenceDate)
+//        TimelineView(.animation) { context in
+//            let t = context.date.timeIntervalSince(referenceDate)
+//            
+//            MeshGradient(width: 5, height: 4, points: [
+//                [0, 0], [0.25, 0], [0.5, 0], [0.75, 0], [1, 0],
+//                
+//                [0, 0.333],
+//                [value(in: 0.0...0.2, offset: 0.1, timeScale: 0.2, t: t),   value(in: 0.25...0.4, offset: 0.1, timeScale: 0.3, t: t)],
+//                [value(in: 0.4...0.6, offset: 0.05, timeScale: 0.3, t: t),  value(in: 0.2...0.4, offset: 0.15, timeScale: 0.3, t: t)],
+//                [value(in: 0.8...1.0, offset: 0.1, timeScale: 0.3, t: t),   value(in: 0.15...0.3, offset: 0.1, timeScale: 0.4, t: t)],
+//                [1, 0.333],
+//                
+//                [0, 0.667],
+//                [value(in: 0.2...0.3, offset: 0.05, timeScale: 0.3, t: t),  value(in: 0.6...0.95, offset: 0.1, timeScale: 0.4, t: t)],
+//                [value(in: 0.4...0.6, offset: 0.07, timeScale: 0.25, t: t),  value(in: 0.6...0.9, offset: 0.1, timeScale: 0.3, t: t)],
+//                [value(in: 0.8...0.9, offset: 0.06, timeScale: 0.3, t: t),  value(in: 0.6...0.8, offset: 0.12, timeScale: 0.3, t: t)],
+//                [1, 0.667],
+//                
+//                [0, 1], [0.25, 1], [0.5, 1], [0.75, 1], [1, 1],
+//            ], colors: [
+//                .black, .black, .black, .black, .black,
+//                .black, .green, .yellow, .orange, .black,
+//                .black, .blue, .purple, .red, .black,
+//                .black, .black, .black, .black, .black
+//            ])
+//        }
+        let t: Double = 3
+        
+        MeshGradient(width: 5, height: 4, points: [
+            [0, 0], [0.25, 0], [0.5, 0], [0.75, 0], [1, 0],
             
-            MeshGradient(width: 5, height: 4, points: [
-                [0, 0], [0.25, 0], [0.5, 0], [0.75, 0], [1, 0],
-                
-                [0, 0.333],
-                [value(in: 0.0...0.2, offset: 0.1, timeScale: 0.2, t: t),   value(in: 0.25...0.4, offset: 0.1, timeScale: 0.3, t: t)],
-                [value(in: 0.4...0.6, offset: 0.05, timeScale: 0.3, t: t),  value(in: 0.2...0.4, offset: 0.15, timeScale: 0.3, t: t)],
-                [value(in: 0.8...1.0, offset: 0.1, timeScale: 0.3, t: t),   value(in: 0.15...0.3, offset: 0.1, timeScale: 0.4, t: t)],
-                [1, 0.333],
-                
-                [0, 0.667],
-                [value(in: 0.2...0.3, offset: 0.05, timeScale: 0.3, t: t),  value(in: 0.6...0.95, offset: 0.1, timeScale: 0.4, t: t)],
-                [value(in: 0.4...0.6, offset: 0.07, timeScale: 0.25, t: t),  value(in: 0.6...0.9, offset: 0.1, timeScale: 0.3, t: t)],
-                [value(in: 0.8...0.9, offset: 0.06, timeScale: 0.3, t: t),  value(in: 0.6...0.8, offset: 0.12, timeScale: 0.3, t: t)],
-                [1, 0.667],
-                
-                [0, 1], [0.25, 1], [0.5, 1], [0.75, 1], [1, 1],
-            ], colors: [
-                .black, .black, .black, .black, .black,
-                .black, .green, .yellow, .orange, .black,
-                .black, .blue, .purple, .red, .black,
-                .black, .black, .black, .black, .black
-            ])
-        }
+            [0, 0.333],
+            [value(in: 0.0...0.2, offset: 0.1, timeScale: 0.2, t: t),   value(in: 0.25...0.4, offset: 0.1, timeScale: 0.3, t: t)],
+            [value(in: 0.4...0.6, offset: 0.05, timeScale: 0.3, t: t),  value(in: 0.2...0.4, offset: 0.15, timeScale: 0.3, t: t)],
+            [value(in: 0.8...1.0, offset: 0.1, timeScale: 0.3, t: t),   value(in: 0.15...0.3, offset: 0.1, timeScale: 0.4, t: t)],
+            [1, 0.333],
+            
+            [0, 0.667],
+            [value(in: 0.2...0.3, offset: 0.05, timeScale: 0.3, t: t),  value(in: 0.6...0.95, offset: 0.1, timeScale: 0.4, t: t)],
+            [value(in: 0.4...0.6, offset: 0.07, timeScale: 0.25, t: t),  value(in: 0.6...0.9, offset: 0.1, timeScale: 0.3, t: t)],
+            [value(in: 0.8...0.9, offset: 0.06, timeScale: 0.3, t: t),  value(in: 0.6...0.8, offset: 0.12, timeScale: 0.3, t: t)],
+            [1, 0.667],
+            
+            [0, 1], [0.25, 1], [0.5, 1], [0.75, 1], [1, 1],
+        ], colors: [
+            .purple, .pink, .black, .black, .black,
+            .black, .green, .yellow, .orange, .black,
+            .black, .blue, .purple, .red, .black,
+            .black, .black, .black, .black, .black
+        ])
     }
     
     func value(in range: ClosedRange<Float>, offset: Float, timeScale: Float, t: TimeInterval) -> Float {
         let amp = (range.upperBound - range.lowerBound) * 0.5
         let midPoint = (range.lowerBound + range.upperBound) * 0.5
         return midPoint + amp * sin(timeScale * Float(t) + offset)
+    }
+}
+
+struct PlayButton: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(
+                AnimatingMeshView(referenceDate: .now)
+                    .scaleEffect(3)
+            )
+            .foregroundStyle(.white)
+            .font(.system(.title3, design: .rounded, weight: .bold))
+            .hoverEffect(.highlight)
+            .clipShape(Capsule())
+            .contentShape(Capsule())
     }
 }

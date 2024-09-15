@@ -20,10 +20,13 @@ struct VisionOSGameView: View {
     
     @State var viewModel: GameViewModel = .init()
     
+    @Environment(AppModel.self) private var appModel
     @Environment(\.realityKitScene) var scene: RealityKit.Scene?
     
     var body: some View {
         RealityView { content, attachments in
+            await viewModel.loadResources()
+            
             let cameraFeedVisualizationEntity = viewModel.cameraFeedVisualizationEntity
             
             #if !targetEnvironment(simulator)
@@ -31,6 +34,8 @@ struct VisionOSGameView: View {
                 cameraFeedVisualizationEntity.addChild(debugViewEntity)
                 debugViewEntity.position = [0, -0.08, 0.05]
             }
+            #else
+// 
             #endif
             
             if let mainViewEntity = attachments.entity(for: ViewAttachment.mainView.rawValue) {
@@ -58,42 +63,26 @@ struct VisionOSGameView: View {
     
     @ViewBuilder
     var mainView: some View {
-        switch viewModel.viewState {
-        case .initializing:
-            EmptyView()
-        case .preGrame, .gameOver:
-            PreGameView(viewModel: viewModel)
-//            VStack {
-//                Text("Toss Tracker")
-//                    .font(.largeTitle)
-//                    .fontDesign(.rounded)
-//                
-//                if viewModel.viewState == .gameOver {
-//                    Text("Game Over with Score: \(viewModel.gameManager.score)")
-//                }
-//                
-//                Button("Start Game") {
-//                    viewModel.startGame()
-//                }
-//            }
-        case .playing:
-            VStack {
-                Text("\(viewModel.gameManager.score)")
-                    .contentTransition(.numericText())
-                    .font(.largeTitle)
-                
-                Button {
-                    viewModel.gameManager.reset()
-                } label: {
-                    Text("Reset Score")
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
+        VStack {
+            switch viewModel.viewState {
+            case .initializing:
+                ProgressView()
+            case .preGrame:
+                PreGameView(viewModel: viewModel)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.opacity.combined(with: .scale))
+            case .playing:
+                GamePlayingView(viewModel: viewModel)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.opacity.combined(with: .scale))
+            case .gameOver(let data):
+                GameOverView(viewModel: viewModel, data: data)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .transition(.opacity.combined(with: .scale))
             }
-            .animation(.spring, value: viewModel.gameManager.score)
-            .padding()
-    //        .glassBackgroundEffect(in: Capsule())
         }
+        .frame(width: 800, height: 600)
+        .animation(.smooth, value: viewModel.viewState)
     }
     
     func formattedPercentage(_ value: Float) -> String {
@@ -169,47 +158,3 @@ struct VisionOSGameView: View {
 //        .environment(AppModel())
 //}
 #endif
-
-class BallEntity: Entity, HasModel, HasPhysics {
-    deinit {
-        print("Deinit BallEntity")
-    }
-    
-    required init() {
-        super.init()
-        commonInit()
-    }
-    
-    private func commonInit() {
-        let colors: [UIColor] = [
-            .systemRed,
-            .systemBlue,
-            .systemOrange,
-            .systemGreen,
-            .systemYellow,
-            .systemPink
-        ]
-        
-        var mat = PhysicallyBasedMaterial()
-        mat.baseColor = .init(tint: colors.randomElement()!)
-        mat.metallic = 0.2
-        mat.roughness = 0.8
-        
-        let sphereRadius: Float = 0.02
-        
-        model = .init(
-            mesh: .generateSphere(radius: sphereRadius),
-            materials: [
-                mat
-            ]
-        )
-        
-        let shape = ShapeResource.generateSphere(radius: sphereRadius)
-        collision = CollisionComponent(shapes: [shape])
-        physicsBody = PhysicsBodyComponent(
-            shapes: [shape],
-            mass: 0.2,
-            mode: .dynamic
-        )
-    }
-}

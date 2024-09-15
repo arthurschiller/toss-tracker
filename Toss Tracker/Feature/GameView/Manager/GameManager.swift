@@ -5,18 +5,45 @@
 //  Created by Arthur Schiller on 14.09.24.
 //
 
+import SwiftUI
 import UIKit
 import Combine
 import Vision
 
+struct GameOverData: Equatable {
+    let score: Int
+    let isNewHighscore: Bool
+}
+
 // MARK: - GameManager
 @Observable
 class GameManager {
-    private(set) var score: Int = 0
+    private(set) var highscore: Int = UserDefaults.standard.integer(forKey: "highscore")
+    private(set) var score: Int = 0 {
+        didSet {
+            guard score != oldValue else {
+                return
+            }
+            scoreChangeSubject.send(score)
+        }
+    }
     private var wasBallPreviouslyInAir: Bool = false
     private var timestampOfLastCount: Date?
     
-    var onGameOver: (() -> Void)?
+    public let scoreChangeSubject: PassthroughSubject<Int, Never> = .init()
+    
+    var onGameOver: ((GameOverData) -> Void)?
+    
+    init() {
+//        #if targetEnvironment(simulator)
+//        set(highscore: 0)
+//        #endif
+        set(highscore: 0)
+    }
+
+    func debugScoreBump() {
+        score += 1
+    }
     
     // Call this function to update the manager with the latest predictions
     func update(predictions: [ObjectDetectionManager.PredictionResult]) {
@@ -42,7 +69,7 @@ class GameManager {
         
         if let timeSinceLastCatch, timeSinceLastCatch > 1.5 {
             print("Game Over!")
-            onGameOver?()
+            handleGameOver()
             return
         }
         
@@ -69,5 +96,25 @@ class GameManager {
         timestampOfLastCount = nil
         wasBallPreviouslyInAir = false
         score = 0
+    }
+    
+    func resetHighscore() {
+        set(highscore: 0)
+    }
+}
+
+private extension GameManager {
+    func set(highscore: Int) {
+        UserDefaults.standard.set(highscore, forKey: "highscore")
+        self.highscore = UserDefaults.standard.integer(forKey: "highscore")
+    }
+    
+    func handleGameOver() {
+        let isNewHighScore = score > highscore
+        let gameOverData = GameOverData(score: score, isNewHighscore: isNewHighScore)
+        if isNewHighScore {
+            set(highscore: score)
+        }
+        onGameOver?(gameOverData)
     }
 }

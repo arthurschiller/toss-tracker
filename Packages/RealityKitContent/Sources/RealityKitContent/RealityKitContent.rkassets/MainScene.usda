@@ -1,0 +1,103 @@
+#usda 1.0
+(
+    defaultPrim = "Root"
+    metersPerUnit = 1
+    upAxis = "Y"
+)
+
+def Xform "Root"
+{
+    reorder nameChildren = ["Sphere_Left", "Sphere_Right", "GridMaterial"]
+    def Sphere "Sphere" (
+        active = true
+        prepend apiSchemas = ["MaterialBindingAPI"]
+        customData = {
+            float3 rotationEulerHint = (0, 0, 0)
+        }
+    )
+    {
+        reorder nameChildren = ["DefaultMaterial", "ParticleEmitter"]
+        rel material:binding = </Root/Sphere/DefaultMaterial>
+        double radius = 0.02
+        quatf xformOp:orient = (0.99999994, 0, 0, 0)
+        float3 xformOp:scale = (0.9999998, 0.9999998, 0.9999998)
+        float3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+        def Material "DefaultMaterial"
+        {
+            token outputs:mtlx:surface
+            token outputs:realitykit:vertex
+            prepend token outputs:surface.connect = </Root/Sphere/DefaultMaterial/DefaultSurfaceShader.outputs:surface>
+
+            def Shader "DefaultSurfaceShader"
+            {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (1, 1, 1)
+                float inputs:roughness = 0.75
+                token outputs:surface
+            }
+        }
+
+        def Xform "ParticleEmitter"
+        {
+            float3 xformOp:scale = (1, 1, 1)
+            float3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+            def RealityKitComponent "VFXEmitter"
+            {
+                token info:id = "RealityKit.VFXEmitter"
+
+                def RealityKitStruct "currentState"
+                {
+                    token birthDirection = "Normal"
+                    int64 burstCount = 0
+                    double emissionDuration = 0.2
+                    token emitterShape = "Plane"
+                    bool isLocal = 0
+                    bool isLocalFields = 1
+                    float particleSpeed = 0
+                    float radialAmount = 6.2831855
+                    float3 shapeSize = (0.011, 0, 0.011)
+                    bool spawnInheritParentColor = 0
+                    token spawnOccasion = "OnDeath"
+                    float spawnSpreadFactor = 0.017453292
+                    float spawnVelocityFactor = 0
+
+                    def RealityKitStruct "mainEmitter"
+                    {
+                        float3 acceleration = (0, -1.5, 0)
+                        float birthRate = 100
+                        token blendMode = "Additive"
+                        float dampingFactor = 2
+                        float4 endColorA = (0.0013006331, 0.032195132, 1, 1)
+                        bool isLightingEnabled = 0
+                        float noiseScale = 0
+                        float noiseStrength = 0
+                        token opacityOverLife = "EaseFadeOut"
+                        float particleAngle = 0
+                        float particleAngularVelocity = 0
+                        double particleLifeSpan = 0.75
+                        float particleMass = 4
+                        float particleSize = 0.008
+                        float3 radialGravityCenter = (0, -1, 0)
+                        float radialGravityStrength = 0.2
+                        float sizeMultiplierAtEndOfLifespan = 0.2
+                        float spreadingAngle = 0
+                        float4 startColorA = (1, 0.028833993, 0.28837162, 1)
+                        float stretchFactor = 2
+                        bool useEndColor = 0
+                        bool useEndColorRange = 0
+                        bool useStartColorRange = 0
+                    }
+
+                    def RealityKitStruct "spawnedEmitter"
+                    {
+                    }
+                }
+            }
+        }
+    }
+}
+
