@@ -33,44 +33,44 @@ struct PreGameView: View {
             logoView
 //                .background(Color.red)
             
-//            VStack(spacing: 24) {
-//                Text("Highscore: \(viewModel.gameManager.highscore)")
+            VStack(spacing: 24) {
+                Text("Highscore: \(viewModel.gameManager.highscore)")
+                    .foregroundStyle(.white)
+                    .font(.system(.largeTitle, design: .rounded, weight: .semibold))
+                    .shadow(color: .black.opacity(0.2), radius: 24, x: 0, y: 1)
+                    .scaleEffect(didAppear ? 1 : 0.5)
+                    .opacity(didAppear ? 1 : 0)
+                    .blur(radius: didAppear ? 0 : 12)
+                    .offset(y: didAppear ? 0 : 16)
+                
+//                Text(howToPlayString)
 //                    .foregroundStyle(.white)
-//                    .font(.system(.largeTitle, design: .rounded, weight: .semibold))
+//                    .font(.system(.caption, weight: .regular))
+//                    .multilineTextAlignment(.leading)
 //                    .shadow(color: .black.opacity(0.2), radius: 24, x: 0, y: 1)
-//                    .scaleEffect(didAppear ? 1 : 0.5)
-//                    .opacity(didAppear ? 1 : 0)
-//                    .blur(radius: didAppear ? 0 : 12)
-//                    .offset(y: didAppear ? 0 : 16)
-//                
-////                Text(howToPlayString)
-////                    .foregroundStyle(.white)
-////                    .font(.system(.caption, weight: .regular))
-////                    .multilineTextAlignment(.leading)
-////                    .shadow(color: .black.opacity(0.2), radius: 24, x: 0, y: 1)
-////                    .frame(maxWidth: 192)
-//                
-//                Button {
-//                    viewModel.startGame()
-//                } label: {
-//                    ZStack {
-//                        Text("Start")
-//                            .foregroundStyle(.black)
-//                            .blendMode(.overlay)
-//                        
-//                        Text("Start")
-//                            .foregroundStyle(.black)
-//                            .blendMode(.overlay)
-//                    }
-//                }
-//                .buttonStyle(PlayButton())
-//                .frame(minWidth: 128)
-//                .scaleEffect(didAppear ? 1 : 0.5)
-//                .opacity(didAppear ? 1 : 0)
-//                .blur(radius: didAppear ? 0 : 12)
-//                .offset(y: didAppear ? 0 : 24)
-//            }
-//            .animation(.easeInOut(duration: 3), value: didAppear)
+//                    .frame(maxWidth: 192)
+                
+                Button {
+                    viewModel.startGame()
+                } label: {
+                    ZStack {
+                        Text("Start")
+                            .foregroundStyle(.black)
+                            .blendMode(.overlay)
+                        
+                        Text("Start")
+                            .foregroundStyle(.black)
+                            .blendMode(.overlay)
+                    }
+                }
+                .buttonStyle(PlayButton())
+                .frame(minWidth: 128)
+                .scaleEffect(didAppear ? 1 : 0.5)
+                .opacity(didAppear ? 1 : 0)
+                .blur(radius: didAppear ? 0 : 12)
+                .offset(y: didAppear ? 0 : 24)
+            }
+            .animation(.easeInOut(duration: 3), value: didAppear)
         }
         .onAppear {
             didAppear = true
