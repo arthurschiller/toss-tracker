@@ -21,7 +21,6 @@ struct ImmersiveView: View {
                 // https://developer.apple.com/
             }
         }
-        .preferredSurroundingsEffect(.ultraDark)
     }
 }
 

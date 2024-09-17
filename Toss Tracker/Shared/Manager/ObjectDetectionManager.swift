@@ -97,7 +97,7 @@ class ObjectDetectionManager {
             
             // TODO: Check why this is needed on visionOS
             #if os(visionOS)
-            request.preferBackgroundProcessing = true
+//            request.preferBackgroundProcessing = true
             request.usesCPUOnly = true
             #endif
         } else {
